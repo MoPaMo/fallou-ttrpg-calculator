@@ -22,21 +22,46 @@ new Vue({
       { name: "Luck", abbr: "LCK", icon: "fas fa-clover", value: 1 },
     ],
     skills: [
-      { name: "Athletics", attributes: ["STR"] },
-      { name: "Barter", attributes: ["CHA"] },
-      { name: "Breach", attributes: ["PER", "INT"] },
-      { name: "Energy Weapons", attributes: ["PER"] },
-      { name: "Explosives", attributes: ["PER"] },
-      { name: "Guns", attributes: ["AGI"] },
-      { name: "Lockpick", attributes: ["PER", "AGI"] },
-      { name: "Medicine", attributes: ["INT", "PER"] },
-      { name: "Melee Weapons", attributes: ["STR", "AGI"] },
-      { name: "Repair", attributes: ["INT"] },
-      { name: "Science", attributes: ["INT"] },
-      { name: "Sneak", attributes: ["AGI"] },
-      { name: "Speech", attributes: ["CHA"] },
-      { name: "Survival", attributes: ["END", "INT"] },
-      { name: "Unarmed", attributes: ["STR", "AGI"] },
+      { name: "Athletics", attributes: ["STR"], icon: "fa-solid fa-running" },
+      { name: "Barter", attributes: ["CHA"], icon: "fa-solid fa-handshake" },
+      {
+        name: "Breach",
+        attributes: ["PER", "INT"],
+        icon: "fa-solid fa-door-open",
+      },
+      { name: "Energy Weapons", attributes: ["PER"], icon: "fa-solid fa-bolt" },
+      { name: "Explosives", attributes: ["PER"], icon: "fa-solid fa-bomb" },
+      { name: "Guns", attributes: ["AGI"], icon: "fa-solid fa-crosshairs" },
+      { name: "Crafting", attributes: ["INT"], icon: "fa-solid fa-hammer" },
+      {
+        name: "Intimidation",
+        attributes: ["STR", "CHA"],
+        icon: "fa-solid fa-exclamation-triangle",
+      },
+      {
+        name: "Medicine",
+        attributes: ["INT", "PER"],
+        icon: "fa-solid fa-briefcase-medical",
+      },
+      {
+        name: "Melee Weapons",
+        attributes: ["STR", "AGI"],
+        icon: "fa-solid fa-fist-raised",
+      },
+      { name: "Repair", attributes: ["INT"], icon: "fa-solid fa-wrench" },
+      { name: "Science", attributes: ["INT"], icon: "fa-solid fa-flask" },
+      { name: "Sneak", attributes: ["AGI"], icon: "fa-solid fa-user-secret" },
+      { name: "Speech", attributes: ["CHA"], icon: "fa-solid fa-comments" },
+      {
+        name: "Survival",
+        attributes: ["END", "INT"],
+        icon: "fa-solid fa-campground",
+      },
+      {
+        name: "Unarmed",
+        attributes: ["STR", "AGI"],
+        icon: "fa-solid fa-hand-rock",
+      },
     ],
   },
   computed: {
@@ -56,7 +81,9 @@ new Vue({
           return this.calculateModifier(stat.value);
         })
         .reduce((a, b) => Math.max(a, b), -Infinity);
-      return highestModifier;
+      let luckStat = this.stats.find((s) => s.abbr === "LCK");
+      let luckModifier = Math.floor(this.calculateModifier(luckStat.value) / 2);
+      return highestModifier + luckModifier;
     },
     formatAttributes(attributes) {
       return attributes.join(" or ");
