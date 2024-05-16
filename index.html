@@ -20,7 +20,7 @@
       <p class="mb-4 text-lg">
         You have {{ remainingPoints }} points left to distribute.
       </p>
-      <div class="flex space-x-4">
+      <div class="flex space-x-4 mb-6">
         <div v-for="stat in stats" :key="stat.name" class="flex-1 text-center">
           <div class="flex items-center justify-center mb-2">
             <i :class="stat.icon + ' mr-1'"></i>
@@ -36,10 +36,34 @@
           <br />
           <span
             class="inline-block bg-yellow-400 text-gray-700 rounded-full px-2 py-1 text-sm"
-            >{{ stat.modifier }}</span
+            >{{ calculateModifier(stat.value) }}</span
           >
         </div>
       </div>
+
+      <table class="w-full text-left">
+        <thead>
+          <tr>
+            <th class="p-2">Icon</th>
+            <th class="p-2">Skill</th>
+            <th class="p-2">Modifier</th>
+            <th class="p-2">Attributes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="skill in skills" :key="skill.name">
+            <td class="p-2"><i class="fa-solid fa-dice-d20"></i></td>
+            <td class="p-2">{{ skill.name }}</td>
+            <td class="p-2">{{ calculateSkillModifier(skill) }}</td>
+            <td class="p-2">
+              <i
+                class="fa-solid fa-question-circle"
+                :title="formatAttributes(skill.attributes)"
+              ></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="app.js"></script>
