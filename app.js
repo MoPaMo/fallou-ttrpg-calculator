@@ -111,13 +111,46 @@ new Vue({
         }
       }
     },
+    initializeTooltips() {
+      this.$refs.tooltips.forEach((tooltip) => {
+        const tooltipContent = document.createElement("div");
+        tooltipContent.textContent = tooltip.getAttribute("data-tooltip");
+        tooltipContent.classList.add("tooltip-content");
+
+        const instance = Popper.createPopper(tooltip, tooltipContent, {
+          placement: "top",
+          modifiers: [
+            {
+              name: "offset",
+              options: {
+                offset: [0, 8],
+              },
+            },
+          ],
+        });
+
+        tooltip.addEventListener("mouseenter", () => {
+          document.body.appendChild(tooltipContent);
+          instance.update();
+        });
+
+        tooltip.addEventListener("mouseleave", () => {
+          document.body.removeChild(tooltipContent);
+        });
+      });
+    },
   },
   watch: {
-    stats: {
+    skills: {
       handler() {
-        this.validatePoints();
+        this.$nextTick(() => {
+          this.initializeTooltips();
+        });
       },
       deep: true,
     },
+  },
+  mounted() {
+    this.initializeTooltips();
   },
 });
