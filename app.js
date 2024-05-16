@@ -86,7 +86,14 @@ new Vue({
       return highestModifier + luckModifier;
     },
     formatAttributes(attributes) {
-      return attributes.join(" or ");
+      let fullNames = [];
+      attributes.forEach((abbr) => {
+        let stat = this.stats.find((stat) => stat.abbr === abbr);
+        if (stat) {
+          fullNames.push(stat.name);
+        }
+      });
+      return fullNames.join(" or ");
     },
     validatePoints() {
       let totalUsedPoints = this.stats.reduce(
