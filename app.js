@@ -74,6 +74,9 @@ new Vue({
     calculateModifier(value) {
       return value - 5;
     },
+    getStatByName(name) {
+      return this.stats.find((stat) => stat.name === name);
+    },
     calculateSkillModifier(skill) {
       let highestModifier = skill.attributes
         .map((attr) => {
