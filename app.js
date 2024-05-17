@@ -18,7 +18,7 @@ new Vue({
         icon: "fa-solid fa-brain",
         value: 1,
       },
-      { name: "Agility", abbr: "AGI", icon: "fas fa-clover", value: 1 },
+      { name: "Agility", abbr: "AGI", icon: "fas fa-running", value: 1 },
       { name: "Luck", abbr: "LCK", icon: "fas fa-clover", value: 1 },
     ],
     skills: [
@@ -139,13 +139,32 @@ new Vue({
         });
       });
     },
+    saveToLocalStorage() {
+      localStorage.setItem("totalPoints", this.totalPoints);
+      localStorage.setItem("stats", JSON.stringify(this.stats));
+      localStorage.setItem("skills", JSON.stringify(this.skills));
+    },
   },
   watch: {
     skills: {
       handler() {
         this.$nextTick(() => {
           this.initializeTooltips();
+          this.saveToLocalStorage();
         });
+      },
+      deep: true,
+    },
+
+    totalPoints: {
+      handler(newValue) {
+        this.saveToLocalStorage();
+      },
+      deep: true,
+    },
+    stats: {
+      handler(newValue) {
+        this.saveToLocalStorage();
       },
       deep: true,
     },
