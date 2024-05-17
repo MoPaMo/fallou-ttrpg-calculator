@@ -48,7 +48,6 @@ new Vue({
         attributes: ["STR", "AGI"],
         icon: "fa-solid fa-fist-raised",
       },
-      { name: "Repair", attributes: ["INT"], icon: "fa-solid fa-wrench" },
       { name: "Science", attributes: ["INT"], icon: "fa-solid fa-flask" },
       { name: "Sneak", attributes: ["AGI"], icon: "fa-solid fa-user-secret" },
       { name: "Speech", attributes: ["CHA"], icon: "fa-solid fa-comments" },
