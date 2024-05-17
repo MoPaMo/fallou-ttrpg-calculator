@@ -67,8 +67,8 @@
           <table class="w-full text-left">
             <tbody>
               <tr v-for="skill in skills" :key="skill.name">
-                <td class="p-2"><i :class="skill.icon"></i></td>
-                <td class="p-2">{{ skill.name }}</td>
+                <td class="p-2 pr-0 mr-0"><i :class="skill.icon"></i></td>
+                <td class="pl-0 ml-0 p-2">{{ skill.name }}</td>
                 <td class="p-2">{{ calculateSkillModifier(skill) }}</td>
                 <td class="p-2">
                   <i
