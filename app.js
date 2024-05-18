@@ -1,67 +1,59 @@
-new Vue({
-  el: "#app",
-  data: {
-    totalPoints: 38,
-    stats: [
-      {
-        name: "Strength",
-        abbr: "STR",
-        icon: "fa-solid fa-hand-fist",
-        value: 1,
-      },
-      { name: "Perception", abbr: "PER", icon: "fa-solid fa-eye", value: 1 },
-      { name: "Endurance", abbr: "END", icon: "fas fa-clover", value: 1 },
-      { name: "Charisma", abbr: "CHA", icon: "fa-solid fa-comment", value: 1 },
-      {
-        name: "Intelligence",
-        abbr: "INT",
-        icon: "fa-solid fa-brain",
-        value: 1,
-      },
-      { name: "Agility", abbr: "AGI", icon: "fas fa-running", value: 1 },
-      { name: "Luck", abbr: "LCK", icon: "fas fa-clover", value: 1 },
-    ],
-    skills: [
-      { name: "Athletics", attributes: ["STR"], icon: "fa-solid fa-running" },
-      { name: "Barter", attributes: ["CHA"], icon: "fa-solid fa-handshake" },
-      {
-        name: "Breach",
-        attributes: ["PER", "INT"],
-        icon: "fa-solid fa-door-open",
-      },
-      { name: "Energy Weapons", attributes: ["PER"], icon: "fa-solid fa-bolt" },
-      { name: "Explosives", attributes: ["PER"], icon: "fa-solid fa-bomb" },
-      { name: "Guns", attributes: ["AGI"], icon: "fa-solid fa-crosshairs" },
-      { name: "Crafting", attributes: ["INT"], icon: "fa-solid fa-hammer" },
-      {
-        name: "Intimidation",
-        attributes: ["STR", "CHA"],
-        icon: "fa-solid fa-exclamation-triangle",
-      },
-      {
-        name: "Medicine",
-        attributes: ["INT", "PER"],
-        icon: "fa-solid fa-briefcase-medical",
-      },
-      {
-        name: "Melee Weapons",
-        attributes: ["STR", "AGI"],
-        icon: "fa-solid fa-fist-raised",
-      },
-      { name: "Science", attributes: ["INT"], icon: "fa-solid fa-flask" },
-      { name: "Sneak", attributes: ["AGI"], icon: "fa-solid fa-user-secret" },
-      { name: "Speech", attributes: ["CHA"], icon: "fa-solid fa-comments" },
-      {
-        name: "Survival",
-        attributes: ["END", "INT"],
-        icon: "fa-solid fa-campground",
-      },
-      {
-        name: "Unarmed",
-        attributes: ["STR", "AGI"],
-        icon: "fa-solid fa-hand-rock",
-      },
-    ],
+const HomeComponent = {
+  template: `
+      <div>
+        <p class="mb-4 text-lg" v-if="remainingPoints > 0">
+          You have {{ remainingPoints }} points left to distribute.
+        </p>
+        <p class="mb-4 text-lg" v-else-if="remainingPoints == 0">
+          You have used all points.
+        </p>
+        <p class="mb-4 text-lg" v-else>
+          You must get rid of {{ -remainingPoints }} points.
+        </p>
+        <div class="flex space-x-4 mb-6">
+          <div v-for="stat in stats" :key="stat.name" class="flex-1 text-center">
+            <div class="flex items-center justify-center mb-2 relative group">
+              <i :class="stat.icon + ' mr-1'"></i>
+              <span class="text-xs group-hover:hidden">{{ stat.abbr }}</span>
+              <span class="text-xs group-hover:block hidden">{{ stat.name }}</span>
+            </div>
+            <input type="number" class="w-full p-2 text-lg text-center border-b-0 border-yellow-400 focus:outline-none invalid:color-red-500" v-model.number="stat.value" min="1" max="10" />
+            <br />
+            <span class="inline-block bg-yellow-400 text-gray-700 rounded-full px-2 py-1 text-sm">
+              {{ calculateModifier(stat.value) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    `,
+  data() {
+    return {
+      totalPoints: 38,
+      stats: [
+        {
+          name: "Strength",
+          abbr: "STR",
+          icon: "fa-solid fa-hand-fist",
+          value: 1,
+        },
+        { name: "Perception", abbr: "PER", icon: "fa-solid fa-eye", value: 1 },
+        { name: "Endurance", abbr: "END", icon: "fas fa-clover", value: 1 },
+        {
+          name: "Charisma",
+          abbr: "CHA",
+          icon: "fa-solid fa-comment",
+          value: 1,
+        },
+        {
+          name: "Intelligence",
+          abbr: "INT",
+          icon: "fa-solid fa-brain",
+          value: 1,
+        },
+        { name: "Agility", abbr: "AGI", icon: "fas fa-running", value: 1 },
+        { name: "Luck", abbr: "LCK", icon: "fas fa-clover", value: 1 },
+      ],
+    };
   },
   computed: {
     remainingPoints() {
@@ -73,105 +65,31 @@ new Vue({
     calculateModifier(value) {
       return value - 5;
     },
-    getStatByName(name) {
-      return this.stats.find((stat) => stat.name === name);
-    },
-    calculateSkillModifier(skill) {
-      let highestModifier = skill.attributes
-        .map((attr) => {
-          let stat = this.stats.find((s) => s.abbr === attr);
-          return this.calculateModifier(stat.value);
-        })
-        .reduce((a, b) => Math.max(a, b), -Infinity);
-      let luckStat = this.stats.find((s) => s.abbr === "LCK");
-      let luckModifier = Math.floor(this.calculateModifier(luckStat.value) / 2);
-      return highestModifier + luckModifier;
-    },
-    formatAttributes(attributes) {
-      let fullNames = [];
-      attributes.forEach((abbr) => {
-        let stat = this.stats.find((stat) => stat.abbr === abbr);
-        if (stat) {
-          fullNames.push(stat.name);
-        }
-      });
-      return fullNames.join(" or ");
-    },
-    validatePoints() {
-      let totalUsedPoints = this.stats.reduce(
-        (acc, stat) => acc + stat.value,
-        0
-      );
-      if (totalUsedPoints > this.totalPoints) {
-        let excess = totalUsedPoints - this.totalPoints;
-        for (let stat of this.stats) {
-          if (stat.value > 1 && excess > 0) {
-            let reduction = Math.min(stat.value - 1, excess);
-            stat.value -= reduction;
-            excess -= reduction;
-          }
-        }
-      }
-    },
-    initializeTooltips() {
-      this.$refs.tooltips.forEach((tooltip) => {
-        const tooltipContent = document.createElement("div");
-        tooltipContent.textContent = tooltip.getAttribute("data-tooltip");
-        tooltipContent.classList.add("tooltip-content");
-
-        const instance = Popper.createPopper(tooltip, tooltipContent, {
-          placement: "top",
-          modifiers: [
-            {
-              name: "offset",
-              options: {
-                offset: [0, 8],
-              },
-            },
-          ],
-        });
-
-        tooltip.addEventListener("mouseenter", () => {
-          document.body.appendChild(tooltipContent);
-          instance.update();
-        });
-
-        tooltip.addEventListener("mouseleave", () => {
-          document.body.removeChild(tooltipContent);
-        });
-      });
-    },
-    saveToLocalStorage() {
-      localStorage.setItem("totalPoints", this.totalPoints);
-      localStorage.setItem("stats", JSON.stringify(this.stats));
-      localStorage.setItem("skills", JSON.stringify(this.skills));
-    },
   },
-  watch: {
-    skills: {
-      handler() {
-        this.$nextTick(() => {
-          this.initializeTooltips();
-          this.saveToLocalStorage();
-        });
-      },
-      deep: true,
-    },
+};
 
-    totalPoints: {
-      handler(newValue) {
-        this.saveToLocalStorage();
-      },
-      deep: true,
-    },
-    stats: {
-      handler(newValue) {
-        this.saveToLocalStorage();
-      },
-      deep: true,
-    },
-  },
-  mounted() {
-    this.initializeTooltips();
-  },
+const AboutComponent = {
+  template: `
+      <div>
+        <h2 class="text-2xl mb-4">About</h2>
+        <p>This is an about page for the Fallout RPG Character Builder.</p>
+      </div>
+    `,
+};
+
+// Define routes
+const routes = [
+  { path: "/", component: HomeComponent },
+  { path: "/about", component: AboutComponent },
+];
+
+// Create the router instance
+const router = new VueRouter({
+  routes,
+});
+
+// Initialize Vue instance with router
+new Vue({
+  el: "#app",
+  router,
 });
